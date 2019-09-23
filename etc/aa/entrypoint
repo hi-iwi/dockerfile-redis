@@ -1,0 +1,43 @@
+#!/bin/bash
+set -e
+
+. /etc/aa/entrypointbase
+
+Timezone=${Timezone:-""}
+Host=${Host:-"redisdocker"}
+LogTag=${LogTag:-"redisent[$$]"}
+GenSslCrt=${GenSslCrt:-""}
+AaAdjustTime "${Timezone}"
+GenSslCrt "${GenSslCrt}"
+
+declare redisLock="/etc/aa/lock/redis.entlock"
+ 
+if [ ! -f "$redisLock" ]; then
+    if [ ! -z "${RedisRequirePass}" ]; then
+        sed -Ei 's/^\s*requirepass\s*/#&/g' /etc/aa/redis.conf
+        echo -e "\nrequirepass ${RedisRequirePass}\n" >> /etc/aa/redis.conf
+    fi
+
+    if [ ! -z "${RedisMasterAuth}" ]; then
+        sed -Ei 's/^\s*masterauth\s*/#&/g' /etc/aa/redis.conf
+        echo -e "\nmasterauth ${RedisMasterAuth}\n" >> /etc/aa/redis.conf
+    fi
+
+    if [ ! -z "${RedisSlaveOf}" ]; then
+        declare mastHost=$(echo ${RedisSlaveOf} | awk -F ':' '{print $1}')
+        declare mastPort=$(echo ${RedisSlaveOf} | awk -F ':' '{print $2}')
+        sed -Ei 's/^\s*slaveof\s*/#&/g' /etc/aa/redis.conf
+        echo -e "\nslaveof ${mastHost} ${mastPort}\n" >> /etc/aa/redis.conf
+    fi
+	touch "$redisLock"
+fi
+
+# 这个是必须要的，即使在CentOS7容器已经设置过权限了，但是这里重新挂载之后，就必须要设置修改权限
+[ ! -d "/var/lib/dockervol/redis" ] && mkdir -p "/var/lib/dockervol/redis"
+chown -R docker:docker /var/lib/dockervol/redis /var/log/dockervol
+
+RunningSignal ${RunningID:-''}
+
+su - docker << EOF
+	$@
+EOF
