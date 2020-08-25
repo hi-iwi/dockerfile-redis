@@ -1,6 +1,6 @@
 FROM aario/centos:7
 
-ENV RedisVer     redis-5.0.7
+ENV RedisVer     redis-6.0.6
 
 # ENV RDS_PORT        6379
 # ENV RDS_CONF        /etc/aa/redis.conf
