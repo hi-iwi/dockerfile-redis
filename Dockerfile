@@ -1,6 +1,7 @@
 FROM aario/centos:7
 
-ENV RedisVer     redis-6.0.9
+# redis 6 支持多线程改动较大，而且要升级gcc，暂不建议使用
+ENV RedisVer     redis-5.0.10
 
 # ENV RDS_PORT        6379
 # ENV RDS_CONF        /etc/aa/redis.conf
@@ -9,7 +10,8 @@ ENV RedisVer     redis-6.0.9
 
 ADD ./src/* /usr/local/src/
 WORKDIR "/usr/local/src/${RedisVer}"
-RUN yum install -y gcc gcc-c++ make && make && make install
+RUN yum install -y gcc gcc-c++ make
+RUN make && make install
 RUN yum clean all  && rm -rf /var/cache/yum && rm -rf /usr/local/src/*
 RUN ln -sf /dev/stdout /var/log/dockervol/stdout.log && ln -sf /dev/stderr /var/log/dockervol/stderr.log
 
