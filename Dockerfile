@@ -1,7 +1,7 @@
 FROM aario/centos:7
 
 # redis 6 支持多线程改动较大，而且要升级gcc，暂不建议使用
-ENV RedisVer     redis-5.0.10
+ENV RedisVer     redis-5.0.14
 
 # ENV RDS_PORT        6379
 # ENV RDS_CONF        /etc/aa/redis.conf
@@ -16,6 +16,6 @@ RUN yum clean all  && rm -rf /var/cache/yum && rm -rf /usr/local/src/*
 RUN ln -sf /dev/stdout /var/log/dockervol/stdout.log && ln -sf /dev/stderr /var/log/dockervol/stderr.log
 
 # COPY 只能复制当前目录，不复制子目录内容
-COPY --chown=Aa:Aa ./etc/aa/*  /etc/aa/
+COPY --chown=iwi:iwi ./etc/aa/*  /etc/aa/
 
 ENTRYPOINT ["/etc/aa/entrypoint", "/usr/local/bin/redis-server", "/etc/aa/redis.conf"]

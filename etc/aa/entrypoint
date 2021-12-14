@@ -6,9 +6,7 @@ set -e
 Timezone=${Timezone:-""}
 Host=${Host:-"redisdocker"}
 LogTag=${LogTag:-"redisent[$$]"}
-GenSslCrt=${GenSslCrt:-""}
 AaAdjustTime "${Timezone}"
-GenSslCrt "${GenSslCrt}"
 
 declare redisLock="/etc/aa/lock/redis.entlock"
  
@@ -34,10 +32,10 @@ fi
 
 # 这个是必须要的，即使在CentOS7容器已经设置过权限了，但是这里重新挂载之后，就必须要设置修改权限
 [ ! -d "/var/lib/dockervol/redis" ] && mkdir -p "/var/lib/dockervol/redis"
-chown -R Aa:Aa /var/lib/dockervol/redis /var/log/dockervol
+chown -R iwi:iwi /var/lib/dockervol/redis /var/log/dockervol
 
 RunningSignal ${RunningID:-''}
 
-su - Aa << EOF
+su - iwi << EOF
 	$@
 EOF
