@@ -1,7 +1,7 @@
 FROM aario/centos:7
 
-# redis 6 支持多线程改动较大，而且要升级gcc，暂不建议使用
-ENV RedisVer     redis-7.2.2
+# 不要升级太超前，尽量最后一个版本超过  10
+ENV RedisVer     redis-7.0.14
 
 
 # ENV RDS_PORT        6379
@@ -15,7 +15,7 @@ WORKDIR "/usr/local/src/${RedisVer}"
 RUN make && make install
 
 # @TODO 安装 bloom filter 模块 编译方法见 ：https://redis.uptrace.dev/guide/bloom-cuckoo-count-min-top-k.html#redisbloom
-
+# bloom filter 安装太多问题！！！！ 没必要就先不要安装了！！！
 RUN yum clean all  && rm -rf /var/cache/yum && rm -rf /usr/local/src/*
 RUN ln -sf /dev/stdout /var/log/dockervol/stdout.log && ln -sf /dev/stderr /var/log/dockervol/stderr.log
 
