@@ -20,6 +20,6 @@ RUN yum clean all  && rm -rf /var/cache/yum && rm -rf /usr/local/src/*
 RUN ln -sf /dev/stdout /var/log/dockervol/stdout.log && ln -sf /dev/stderr /var/log/dockervol/stderr.log
 
 # COPY 只能复制当前目录，不复制子目录内容
-COPY --chown=iwi:iwi ./etc/aa/*  /etc/aa/
+COPY --chown=aario:aario ./etc/aa/*  /etc/aa/
 
 ENTRYPOINT ["/etc/aa/entrypoint", "/usr/local/bin/redis-server", "/etc/aa/redis.conf"]
