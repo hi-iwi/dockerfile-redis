@@ -4,6 +4,12 @@ FROM aario/centos:7
 ENV RedisVer     redis-7.0.14
 
 
+# centos 7 停止更新yum源了，但是每次重启都会生成很多centos的源而无法访问。这里清除一下
+RUN mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
+RUN rm -f /etc/yum.repos.d/*.repo
+RUN mv /etc/yum.repos.d/CentOS-Base.repo.bak /etc/yum.repos.d/CentOS-Base.repo
+RUN yum clean all
+RUN yum makecache
 # ENV RDS_PORT        6379
 # ENV RDS_CONF        /etc/aa/redis.conf
 # ENV RDS_DATA_DIR    /var/lib/dockervol/redis
